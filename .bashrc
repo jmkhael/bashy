@@ -1,8 +1,7 @@
 #!/bin/sh
 
-
-if [ -f ".bash_ps1" ]; then
- . ".bash_ps1"
+if [ -e "${HOME}/.bash_ps1" ]; then
+ . "${HOME}/.bash_ps1"
 fi
 
 # enable programmable completion features (you don't need to enable

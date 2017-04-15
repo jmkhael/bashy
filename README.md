@@ -4,7 +4,8 @@ Checkout this into your home:
 e.g. /home/jmkhael/workspace
 
 ```
-pushd ${HOME}
+mkdir -p ${HOME}/workspace 
+pushd ${HOME}/workspace
 git clone https://github.com/jmkhael/bashy
 ```
 

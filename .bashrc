@@ -83,29 +83,6 @@ function shellinabox
   ~/shellinaboxd -t -b --no-beep
 }
 
-function prompt
-{
-return
-  # Change the prompt
-  PROMPT_COLOR='0;36m'
-  case $1 in
-        SunOS*)
-  PS1='\[\e]1;\h\a\e]2;\h:${PWD}\a\
-\e[${PROMPT_COLOR}\][\u@\h:\w]\n \!\$ \[\e[m\]'
-        ;;
-        CYGWIN*)
-  PS1='\[\e]1;\h\a\e]2;\h:${PWD}\a\
-\e[${PROMPT_COLOR}\][\u@\h \w]\n \!\$ \[\e[m\]'
-        ;;
-        AIX)
-  PS1='[\u@\h \w]\n \!\$ '
-        ;;
-        *)
-   export PS1="\[\033[38;5;247m\]\d\[$(tput sgr0)\]\[\033[38;5;15m\] \T :: \[$(tput sgr0)\]\[\033[38;5;32m\]\u\[$(tput sgr0)\]\[\033[38;5;15m\]@\[$(tput sgr0)\]\[\033[38;5;9m\]\H\[$(tput sgr0)\]\[\033[38;5;15m\]:\[$(tput sgr0)\]\[\033[38;5;135m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\n \[$(tput sgr0)\]\[\033[38;5;208m\]\\$\[$(tput sgr0)\]\[\033[38;5;15m\] \[$(tput sgr0)\]"
-        ;;
-  esac
-}
-
 function exportDlls
 {
   if [ $# -ne 2 ]
@@ -502,86 +479,15 @@ fi
 # Platform specific
 #-----------------------
 case "`uname`" in
-  CYGWIN*)
-
-  # Don't use ^D to exit unless for me :D
-  if [ `whoami` != "jmkhael" ];
-  then
-   set -o ignoreeof
-  fi
-
-  if [ `ps -eaf | grep bin/XWin | wc -l` -eq 0 ];
-  then
-   startxwin.bat > /dev/null &
-  fi
-
-  # Programming
-  alias mscomp='mscomp.bat'
-  alias mslib='mslib.bat'
-  alias mslink='mslink.bat'
-
-  # Coloring output
-  alias ls='ls -hF --color'
-  alias grep='grep --color'
-  alias dir='ls --color=auto --format=vertical'
-
-function settitle() { echo -n "^[]2;$@^G^[]1;$@^G"; }
-function emed() { cygstart emed `cygpath -w $1`; }
-
-export VISUAL='emed'
-
-# Perforce related functions
-function p4
-{
-  P4=`which p4`
-  "$P4" -d $(cygpath -w $PWD) $*;
-}
-
-function remote
-{
- X :1 -from 172.21.29.44 -query $1 &
-}
-
-  # Set the prompt
-  prompt CYGWIN
-   ;;
   SunOS)
 
   alias ps='/usr/ucb/ps -auxwww'
-
-  # Display some machine info
-  ii
-  # Set display
-  disp
-
-  # Set the prompt
-  prompt SunOS
-  ;;
-  Linux)
-  # Display some machine info
-  ii
-  # Set display
-  disp
-  # Set the prompt
-  prompt Linux
-  ;;
-  AIX)
-  # Display some machine info
-  ii
-  # Set display
-  disp
-  # Set the prompt
-  prompt AIX
-  ;;
-  HP-UX)
-  # Display some machine info
-  ii
-  # Set display
-  disp
-
-  # Set the prompt
-  prompt HP-UX
   ;;
 esac
+
+# Display some machine info
+ii
+# Set display
+disp
 
 PATH=`echo $PATH | sed -e 's/:\/usr\/local\/java\/jdk1.7.0_79\/bin//'`

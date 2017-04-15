@@ -24,6 +24,18 @@ if [ -e "${HOME}/.bashrc" ] ; then
   source "${HOME}/.bashrc"
 fi
 
+if [ -e "${HOME}/.bash_ps1" ]; then
+ . "${HOME}/.bash_ps1"
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
+    . /etc/bash_completion
+fi
+
+
 # Set PATH so it includes user's private bin if it exists
 if [ -d "${HOME}/bin" ] ; then
   PATH=${HOME}/bin:${PATH}

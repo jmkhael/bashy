@@ -1,16 +1,5 @@
 #!/bin/sh
 
-if [ -e "${HOME}/.bash_ps1" ]; then
- . "${HOME}/.bash_ps1"
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
-fi
-
 #-----------------------
 # Global and local to profile
 #-----------------------
@@ -339,25 +328,6 @@ function reload
 function rebash
 {
    source ~/.bashrc;
-}
-
-function replace_synched
-{
-  difference=`diff $1 $1_synched`
-  if [ "$difference" != "" ]
-  then
-   echo -e "Difference found:\n$difference";
-
-   if ask "Replace current $1?"
-   then
-     \mv $1_synched $1
-   else
-     \rm $1_synched
-   fi
-  else
-   echo "$1 up to date"
-   \rm $1_synched
-  fi
 }
 
 #-----------------------

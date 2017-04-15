@@ -24,11 +24,6 @@ if [ -z "$LOGNAME" ]
  export LOGNAME=`whoami`
 fi
 
-# Remote host configurations
-export R_TEMP='d/temp'
-export R_PORT=22
-export CYGWIN_HOME='d/cygwin/home/'${LOGNAME}
-
 #-----------------------
 # History Options
 #-----------------------
@@ -63,9 +58,7 @@ alias moer='more'
 alias moew='more'
 alias moze='more'
 alias kk='ll'
-alias cs='cd `pwd | sed s,^/genoff\.,/src/,`'
-alias cb='cd `pwd | sed s,^/src/,/genoff\.,`'
-alias p4mad="p4 dirs //depot/v3.1.build.* | grep mad | awk -F'/' '{print $4}' | xargs -i echo //depot/{}/... //jmkhael-win7-fr/{}/..."
+
 #-----------------------
 # Prompt and coloring
 #-----------------------
@@ -88,18 +81,6 @@ esac
 function shellinabox
 {
   ~/shellinaboxd -t -b --no-beep
-}
-
-function eligible
-{ 
-if [ $# -ne 1 ]
-  then
-    echo usage $FUNCNAME "branch";
-    echo e.g: $FUNCNAME v3.1.build.merge.14233.pac 
-  else
-    BRANCH=$1;
-    p4 changes //depot/$BRANCH/... | grep -v builder | awk '{print $2}' | xargs -i p4 describe -s {} | grep "//depot/" > f.out; grep hbm.xml f.out & grep java f.out & grep DTD f.out;
-  fi
 }
 
 function prompt
@@ -171,10 +152,10 @@ function disp
     DISPLAY=$1;
   else
     if [ -z $DISPLAY ]; then
-      if [ "$LOGNAME" != "$SHORTHOSTNAME" ]; then 
+      if [ "$LOGNAME" != "$SHORTHOSTNAME" ]; then
           # Display on remote host
 	  DISPLAY=${LOGNAME}.fr.murex.com:1.0
-      else		
+      else
           # Display on local host
 	  DISPLAY=":1.0"
       fi
@@ -197,16 +178,6 @@ function disp
 #-----------------------
 # Developper helpers
 #-----------------------
-function src
-{
-   pushd /src/work/$LOGNAME/$*;
-}
-
-function genwork
-{
-   pushd /genwork/$LOGNAME/$*;
-}
-
 function portUsed
 {
 if [ $# -ne 1 ]
@@ -237,7 +208,7 @@ function findPid
          # Several pids found: $pid
 	 # Please check the regex
 	 echo "0";
-       else       
+       else
          # Process id: $pid
 	 echo $pid;
        fi
@@ -275,7 +246,7 @@ function attach
      processName=$1
      regex=$2
      srcServer=$3
-     
+
      echo Calling findPid $processName $regex
      pid=`findPid $processName $regex`
      if [ $pid -ne 0 ]
@@ -307,7 +278,7 @@ function pollAttach
       echo -ne ".";
       pid=`findPid $processName $regex`;
     done
- 
+
     if [ ! -z $pid ]
     then
       echo "found PID $pid"
@@ -328,7 +299,7 @@ function poll
   else
     condition=$1;
     action=$2;
-    
+
     status=`$condition`;
 
     while [ $status -eq 0 ]
@@ -336,7 +307,7 @@ function poll
       sleep 1;
       status=`$condition`;
     done
- 
+
     if [ ! -z $status ]
     then
       #echo "Condition met: $condition, executing $action...";
@@ -357,7 +328,7 @@ function pollXargsEnd
   else
     condition=$1;
     action=$2;
-    
+
     status=`$condition`;
 
     while [ $status -eq 0 ]
@@ -366,62 +337,13 @@ function pollXargsEnd
       sleep 1;
       status=`$condition`;
     done
- 
+
     if [ ! -z $status ]
     then
       #echo "Condition met: $condition, executing...";
       $action $status;
     fi
   fi
-}
-
-function prepare4Rational
-{
-  if [ $# -ne 2 ]
-  then
-    usage $FUNCNAME "version destination";
-    echo e.g: $FUNCNAME v3.1.build-724077-080220-1037-228042 hp016srv:/hp016srv2/apps/qa10037_TPK0000378_586250
-  else
-     echo preparing for rational
-     version=$1
-     destination=$2
-     
-     \rm /genoff.new/$version/progs/jniproc/exe/jniproc
-     pushd /src/new/$version/progs/jniproc
-     zcomp -debug
-     zlink -debug
-     
-     \rm /genoff.new/$version/progs/mxnodll/exe/mxpure
-     pushd /src/new/$version/progs/mxnodll
-     zcomp -debug @mxpure
-     zlink -debug @mxpure
-     
-     copyRational $version $destination
-  fi
-   
-}
-
-function copyRational
-{
-  if [ $# -ne 2 ]
-  then
-    usage $FUNCNAME "version destination";
-    echo e.g: $FUNCNAME v3.1.build-724077-080220-1037-228042 hp016srv:/hp016srv2/apps/qa10037_TPK0000378_586250
-  else
-     echo copying rational...
-     version=$1
-     destination=$2
-
-     echo copying jniproc...
-     scp /genoff.new/$version/progs/jniproc/exe/jniproc $destination
-
-     echo copying mxpure...
-     scp /genoff.new/$version/progs/mxnodll/exe/mxpure $destination
-
-     echo copying purifycache...
-     scp -r /genoff.new/$version/progs/mxnodll/o/purifycache $destination
-  fi
-   
 }
 
 function diffsort
@@ -442,19 +364,13 @@ function rebash
    source ~/.bashrc;
 }
 
-# Push profile on developper cygwin home
-function pushprofile
-{
-  scp -qP $R_PORT ~/.bash_profile ~/.bashrc $LOGNAME@$LOGNAME:/mnt/$CYGWIN_HOME;
-}
-
 function replace_synched
 {
   difference=`diff $1 $1_synched`
   if [ "$difference" != "" ]
   then
    echo -e "Difference found:\n$difference";
-   
+
    if ask "Replace current $1?"
    then
      \mv $1_synched $1
@@ -467,34 +383,9 @@ function replace_synched
   fi
 }
 
-# Sync profile from developper cygwin home
-function syncprofile
-{
-   if ask "Sync the .bash_profile?"
-   then
-     echo "Synching .bash_profile ...";
-     scp  -qP $R_PORT $LOGNAME@$LOGNAME:/mnt/$CYGWIN_HOME/.bash_profile ~/.bash_profile_synched
-     replace_synched ~/.bash_profile
-   fi
-     
-   if ask "Sync the .bashrc?"
-   then
-     echo "Synching .bashrc ...";
-     scp  -qP $R_PORT $LOGNAME@$LOGNAME:/mnt/$CYGWIN_HOME/.bashrc ~/.bashrc_synched
-     replace_synched ~/.bashrc
-   fi
-}
-
 #-----------------------
 # General helpers
 #-----------------------
-# Nedit is always a background task
-function nedit
-{
-  NEDIT=`which nedit`
-  $NEDIT $* &
-}
-
 # Usage syntax coloring helper
 function usage
 {
@@ -511,12 +402,6 @@ function ask()
     esac
 }
 
-# Remote execution
-function rexec
-{
-  ssh -p $R_PORT $LOGNAME@$LOGNAME "$*";
-}
-
 # get current host related info
 function ii
 {
@@ -528,12 +413,12 @@ function ii
     echo -e "\n${RED}Users logged on:$NC " ; w -h
     echo -e "\n${RED}Current date :$NC " ; date
     echo -e "\n${RED}Machine stats :$NC " ; uptime
-    
+
     if [ -x /usr/bin/free ]
     then
-      echo -e "\n${RED}Memory stats :$NC " ; free
+      echo -e "\n${RED}Memory stats :$NC " ; free -h
     fi
-    
+
     echo -e "\n${CYAN}This is BASH ${RED}${BASH_VERSION%.*}${NC}\n"
   fi
 }
@@ -584,60 +469,6 @@ Usage: fstr [-i] \"pattern\" [\"filename pattern\"] "
     done
 }
 
-#-----------------------
-# Files transfer
-#-----------------------
-
-# Push file on developper machine
-function pushfile
-{
-  if [ $# -ne 2 ]
-  then
-    usage $FUNCNAME "source destination";
-  else
-    scp -qP $R_PORT $1 $LOGNAME@$LOGNAME:/mnt/$2;
-  fi
-}
-
-# Gzip file or path
-function gzipfile
-{
-  if [ $# -ne 1 ]
-  then
-    usage $FUNCNAME "source"
-  else
-    tar -cf $1.tar $1;
-    gzip $1.tar
-  fi
-}
-
-# Push the file to the developper machine, but zip it first
-function pushzipped
-{
-  if [ $# -ne 2 ]
-  then
-    usage $FUNCNAME "source destination";
-  else
-    gzipfile $1
-    pushfile $1.tar.gz $2;
-    \rm $1.tar.gz
-   fi
-}
-
-# Push the file to the developper machine, but zip it first with respect to IBM convention
-function pushzippedibm
-{
-  if [ $# -ne 2 ]
-  then
-    usage $FUNCNAME "source destination";
-  else
-    gzipfile $1
-    mv $1.tar.gz 72896.660.706.$1.tar.gz
-    pushfile 72896.660.706.$1.tar.gz $2
-    \rm 72896.660.706.$1.tar.gz
-  fi
-}
-
 # Find all the executables in the current directory
 function findexecutable
 {
@@ -653,7 +484,7 @@ function findjarexportingpackage
    IFS=$'\n';
    package=$1
    for f in `find . | grep "\.jar$"`;
-   do 
+   do
      found=`jar tf $f | grep $package | wc -l`;
 
      if [ $found -gt 0 ];
@@ -672,14 +503,14 @@ fi
 #-----------------------
 case "`uname`" in
   CYGWIN*)
-  
+
   # Don't use ^D to exit unless for me :D
-  if [ `whoami` != "jmkhael" ]; 
+  if [ `whoami` != "jmkhael" ];
   then
    set -o ignoreeof
   fi
 
-  if [ `ps -eaf | grep bin/XWin | wc -l` -eq 0 ]; 
+  if [ `ps -eaf | grep bin/XWin | wc -l` -eq 0 ];
   then
    startxwin.bat > /dev/null &
   fi
@@ -688,12 +519,12 @@ case "`uname`" in
   alias mscomp='mscomp.bat'
   alias mslib='mslib.bat'
   alias mslink='mslink.bat'
-  
+
   # Coloring output
   alias ls='ls -hF --color'
   alias grep='grep --color'
   alias dir='ls --color=auto --format=vertical'
-  
+
 function settitle() { echo -n "^[]2;$@^G^[]1;$@^G"; }
 function emed() { cygstart emed `cygpath -w $1`; }
 
@@ -722,7 +553,7 @@ function remote
   ii
   # Set display
   disp
-  
+
   # Set the prompt
   prompt SunOS
   ;;
@@ -747,7 +578,7 @@ function remote
   ii
   # Set display
   disp
-  
+
   # Set the prompt
   prompt HP-UX
   ;;

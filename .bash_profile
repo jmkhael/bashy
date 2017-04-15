@@ -24,10 +24,6 @@ if [ -e "${HOME}/.bashrc" ] ; then
   source "${HOME}/.bashrc"
 fi
 
-if [ -e "${HOME}/.bash_ps1" ]; then
- . "${HOME}/.bash_ps1"
-fi
-
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).

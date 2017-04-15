@@ -1,5 +1,9 @@
 #!/bin/sh
 
+if [ -e "${HOME}/.bash_ps1" ]; then
+ . "${HOME}/.bash_ps1"
+fi
+
 #-----------------------
 # Global and local to profile
 #-----------------------

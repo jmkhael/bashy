@@ -51,6 +51,7 @@ alias moer='more'
 alias moew='more'
 alias moze='more'
 alias kk='ll'
+alias topmem='top -b -o +%MEM | head -n 22'
 
 #-----------------------
 # Prompt and coloring
@@ -465,3 +466,6 @@ ii
 disp
 
 PATH=`echo $PATH | sed -e 's/:\/usr\/local\/java\/jdk1.7.0_79\/bin//'`
+
+complete -cf sudo
+complete -cf man

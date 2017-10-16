@@ -457,6 +457,26 @@ fi
 
 }
 
+function serviceInStack() {
+  service=$1;
+  stack_services=$2;
+  #echo $service; echo $stack_services;
+
+  if ! (echo ${stack_services[@]} | grep -q -w "$service"); then
+    #echo ".";
+  #else
+    echo "$service is not in any stack";
+  fi;
+}
+
+function servicesInNoStack() {
+  unset stack_services
+  IFS=$'\n'; for stack in $(docker stack ls --format {{.Name}}); do stack_services+=($(docker stack services $stack --format {{.Name}})); done
+  echo checking in ${stack_services[@]}
+
+  IFS=$'\n'; for service in $(docker service ls --format {{.Name}}); do serviceInStack $service $stack_services; done
+}
+
 #-----------------------
 # Entry point
 # Platform specific

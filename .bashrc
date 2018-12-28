@@ -497,3 +497,12 @@ PATH=`echo $PATH | sed -e 's/:\/usr\/local\/java\/jdk1.7.0_79\/bin//'`
 
 complete -cf sudo
 complete -cf man
+
+export DOCKER_HOST=tcp://localhost:2375
+
+sudo mount --bind /mnt/d /d
+sudo mount --bind /mnt/c /c
+
+cd ~
+alias work='cd /d/1d-mx/workspace/'
+

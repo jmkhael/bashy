@@ -500,9 +500,6 @@ complete -cf man
 
 export DOCKER_HOST=tcp://localhost:2375
 
-sudo mount --bind /mnt/d /d
-sudo mount --bind /mnt/c /c
-
 cd ~
 alias work='cd /d/1d-mx/workspace/'
 

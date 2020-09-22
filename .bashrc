@@ -61,6 +61,8 @@ alias moze='more'
 alias kk='ll'
 alias topmem='top -b -o +%MEM | head -n 22'
 
+cheat() { curl -s "https://raw.githubusercontent.com/cheat/cheatsheets/master/$1"; }
+
 #-----------------------
 # Prompt and coloring
 #-----------------------
@@ -502,4 +504,6 @@ export DOCKER_HOST=tcp://localhost:2375
 
 cd ~
 alias work='cd /d/1d-mx/workspace/'
-
+source <(kubectl completion bash)
+alias k=kubectl
+complete -F __start_kubectl k

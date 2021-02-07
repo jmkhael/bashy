@@ -62,6 +62,7 @@ alias kk='ll'
 alias topmem='top -b -o +%MEM | head -n 22'
 
 cheat() { curl -s "https://raw.githubusercontent.com/cheat/cheatsheets/master/$1"; }
+how_in() {   where="$1"; shift;   IFS=+ curl "https://cht.sh/$where/$*"; }
 
 #-----------------------
 # Prompt and coloring
@@ -497,6 +498,9 @@ disp
 
 PATH=`echo $PATH | sed -e 's/:\/usr\/local\/java\/jdk1.7.0_79\/bin//'`
 
+# Add krew to the path
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
 complete -cf sudo
 complete -cf man
 
@@ -507,3 +511,19 @@ alias work='cd /d/1d-mx/workspace/'
 source <(kubectl completion bash)
 alias k=kubectl
 complete -F __start_kubectl k
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/home/johnny/miniconda3/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/home/johnny/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/johnny/miniconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/home/johnny/miniconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
+

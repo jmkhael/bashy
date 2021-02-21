@@ -527,3 +527,4 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+source ~/.bash_ps1

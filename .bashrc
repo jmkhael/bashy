@@ -528,3 +528,4 @@ unset __conda_setup
 # <<< conda initialize <<<
 
 source ~/.bash_ps1
+alias msfconsole="docker run --rm -it metasploitframework/metasploit-framework ./msfconsole"

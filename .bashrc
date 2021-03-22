@@ -530,4 +530,4 @@ unset __conda_setup
 
 source ~/.bash_ps1
 alias msfconsole="docker run --rm -it metasploitframework/metasploit-framework ./msfconsole"
-alias kali='docker run -it kalilinux/kali-rolling /bin/bash'
+alias kali='docker run -it --rm jmkhael/kali'
